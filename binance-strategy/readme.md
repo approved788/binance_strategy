@@ -17,7 +17,7 @@ Below is screenshot of web interface that you must see.
 
 P.S. Feed chart is looking strange, because binance gives test-feed like you see :)
 
-![Alt text](static/Web-interface.png?raw=true)
+![Alt text](application/static/Web-interface.png?raw=true)
 
 System signal was created on Simple Moving Average, constructed on bid close prices,
 channel is simply distance measured in raw price-points of BTCUSDT, risk is measured in fixed amount.
