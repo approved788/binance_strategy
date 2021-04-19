@@ -1,0 +1,13 @@
+# Can be created safe from loop
+# Builded on Mac OS Catalina 10.15.7
+# Python version = 3.9.2
+flask-bootstrap
+flask
+flask-wtf
+pandas
+jsonify
+python-binance
+pandas
+websocket
+websocket-client
+ta-lib

@@ -1,0 +1,117 @@
+<html>
+    <head>
+        <title>Binance Demo Strategy</title>
+        <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    </head>
+
+    <body>
+        <h2 style="text-align: center; color: darkmagenta; margin-bottom: 2rem;">Welcome to Binance MA Mean-Revertion strategy control center.</h2>
+        <div class="row">
+
+            <div style="margin-left: 2rem;" id="balances">
+                <h2>Account Balances</h2>
+                {% if system.get_balance() == [] %}
+                    <p>Account is empty, put some coins on it !</p>
+                {% elif system.get_balance() != [] %}
+                    <table class="table table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Asset Name</th>
+                                <th scope="col">Value</th>
+                            </tr>
+                        </thead>
+                        {% for balance in system.get_balance() %}
+                            <tr>
+                                <td>
+                                    {{ balance['asset'] }}
+                                </td>
+                                <td>
+                                    {{'%0.2f'| format(balance['free']|float)}}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+            </div>
+            
+            <div class="col" id="settings">
+                <h2 style="text-align: center;">Strategy settings</h2>
+                <div class="row">
+                    <div style="border: 2px dotted; margin-left: 3rem;" class="col-4">
+                        <p style="text-align: center;">New settings</p>
+                        <form method="POST" action="{{ url_for('change_settings')}}">
+                            {{ form.csrf_token }}
+                            {{ form.ma_period.label}} {{ form.ma_period(size=10)}}
+                            {{ form.ma_up.label}} {{ form.ma_up(size=10)}}
+                            {{ form.ma_dn.label}} {{ form.ma_dn(size=10)}}
+                            {{ form.risk_vol.label}} {{ form.risk_vol(size=10)}}
+                            <input class="btn btn-primary" style="min-width: 3rem; margin-top: 1rem;" type="submit" name="but" value="Update">
+                        </form>
+                    </div>
+
+                    <div style="border: 2px dotted; margin-left: 1rem; max-width: fit-content;" class="col-5" id="curr_sett">
+                        <p style="text-align: center;">Current settings</p>
+                        <div class="col">
+                            <div class="row">
+                                <p>MA</p>
+                                <p style="margin-left: 1rem; color: darkblue; font-weight: bold;">{{old_set.ma_period}}</p>
+                            </div>
+                            <div class="row">
+                                <p>MA UP</p>
+                                <p style="margin-left: 1rem; color: darkblue; font-weight: bold;">{{old_set.ma_up}}</p>
+                            </div>
+                            <div class="row">
+                                <p>MA DN</p>
+                                <p style="margin-left: 1rem; color: darkblue; font-weight: bold;">{{old_set.ma_dn}}</p>
+                            </div>
+                            <div class="row">
+                                <p>Risk</p>
+                                <p style="margin-left: 1rem; color: darkblue; font-weight: bold;">{{old_set.risk}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="chart">
+                <link rel="stylesheet" href="{{url_for('static', filename='css.css')}}">
+            </div>
+        </div>
+
+        <div id="trades">
+            <h2 style="text-align: center;">Account orders history</h2>
+
+            <table class="table table-striped table-sm">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Order ID</th>
+                        <th scope="col">Order Symbol</th>
+                        <th scope="col">Order Side</th>
+                        <th scope="col">Exec Status</th>
+                        <th scope="col">Req. Vol</th>
+                        <th scope="col">Rec Vol</th>
+                        <th scope="col">Exec time</th>
+                    </tr>
+                </thead>
+                {% for order in system.get_trades() %}
+                    <tr>
+                        {% for key, value in order.items() %}
+                            <td>
+                                {% if key == 'OriginalVolume' or key == 'ExecutedVolume' %}
+                                {{'%0.2f'| format(value|float)}}
+                                {% else %}
+                                    {{ value }}
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    <tr>
+                {% endfor %}
+            </table>
+        </div> 
+        <script>
+            var tradeDiv = document.getElementById('trades');
+        </script>
+        <script src="{{ url_for('static', filename='chart.js')}}"></script>
+    </body>
+</html>
