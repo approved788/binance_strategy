@@ -2,3 +2,5 @@
 binance-strategy/application/__pycache__
 binance-strategy/application/env
 
+# Strange
+.DS_Store
