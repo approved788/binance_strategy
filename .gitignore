@@ -4,3 +4,6 @@ binance-strategy/application/env
 
 # Strange
 .DS_Store
+
+# Dirty Dev
+ddev/
